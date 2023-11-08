@@ -205,189 +205,203 @@ end
 function Mobs()
 data = gg.prompt(
 {
-  'Локация',
-  'Количество',
-  'хз',
-  'собрать все золото', 
-  'ask path', 'ask file',
-  'К порталу', 
-  'Безопасный Выход',
-  'Бессмертие',
-  'стянуть всех'
+	'Локация',
+	'Количество',
+	'хз',
+	'собрать все золото',
+	'ask path', 
+	'ask file','К порталу', 
+	'Безопасный Выход',
+	'Бессмертие',
+	'стянуть всех'},
+{ 
+	[12]=false,
+	[2]="0"
 },
 {
-  [12]=false,
-  [2]="0"
-},
-{
-  [2]='0 ', 
-  [1]='text',
-  [3]='checkbox',
-  [4]='checkbox', 
-  [5]='path', 
-  [6]='file',
-  [7]='checkbox', 
-  [8]='checkbox',
-  [9]='checkbox',
-  [10]='checkbox'
+	[2]='0 ',
+	[1]='text',
+	[3]='checkbox',
+	[4]='checkbox', 
+	[5]='path', 
+	[6]='file',
+	[7]='checkbox', 
+	[8]='checkbox',
+	[9]='checkbox',
+	[10]='checkbox'
 })
 
-if data[1] == 'A13' then
-  gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
-  local www = gg.getResults(1)
-  local zet = {}
-  zet[1] = {}
-  zet[1].address = www[1].address + mobs
-  zet[1].flags = gg.TYPE_DWORD
-  zet[1].value = 197054
-  gg.setValues(zet)
-  gg.clearResults()
-  gg.searchNumber(655365, gg.TYPE_DWORD)
-  local counts = gg.getResults(2)
-  gg.removeResults(counts)
-  data[2] = tonumber(data[2])
+if data[1]=='A13' then
+gg.searchNumber("001B000Dh", gg.TYPE_DWORD,false, gg.SIGN_EQUAL, 0, -1, 0)
 
-  while data[2] > 0 do
-    gg.searchNumber(655365, gg.TYPE_DWORD)
-    local wi = gg.getResults(1)
-    local q = {}
-    q[1] = {}
-    q[1].address = wi[1].address + 0x4
-    q[1].flags = gg.TYPE_DWORD
-    q[1].value = 197054
-    gg.setValues(q)
-    local B = gg.getResults(1)
-    gg.editAll('0', gg.TYPE_DWORD)
-    gg.removeResults(B)
-    data[2] = data[2] - 1
-    gg.searchNumber(655365, gg.TYPE_DWORD)
-    gg.sleep(10)
-  end
+gg.getResults(1)
+www=gg.getResults(1)
+local zet={}
+zet[1]={}
+zet[1].address=www[1].address+mobs
+zet[1].flags=gg.TYPE_DWORD
+zet[1].value=197054
+gg.setValues(zet)
+gg.clearResults()
+gg.searchNumber(655365,gg.TYPE_DWORD)
+local counts=gg.getResults(2)
+gg.removeResults(counts)
+data[2]=tonumber(data[2])
+--
+while data[2]>0 do
+gg.searchNumber(655365,gg.TYPE_DWORD)
+wi=gg.getResults(1)
+local q={}
+q[1]={}
+q[1].address=wi[1].address + 0x4 
+q[1].flags=gg.TYPE_DWORD
+q[1].value=197054
+gg.setValues(q)
 
-  if data[1] == 'A13' and data[7] then
-    zet[1].value = 31850946
-    gg.setValues(zet)
-  end
+local B=gg.getResults(1)    
+gg.editAll('0',gg.TYPE_DWORD)
+gg.removeResults(B)
+data[2]=data[2]-1
+gg.searchNumber(655365,gg.TYPE_DWORD)
+gg.sleep(10)
+end
+if data[1]=='A13' and data[7] then
+zet[1].value=31850946 
+gg.setValues(zet)
+end
 end
 
+--zxc
 if data[10] then
-  gg.searchNumber("1769485", gg.TYPE_DWORD)
-  local get_rs = gg.getResults(1)
-  local player = {}
-  player[1] = {}
-  player[1].address = get_rs[1].address + 0x4
-  player[1].flags = gg.TYPE_DWORD
-  player = gg.getValues(player)
-  local result = player[1].value
-  gg.clearResults()
 
-  gg.searchNumber(655365, gg.TYPE_DWORD)
-  local cnta = gg.getResultsCount()
-  while cnta > 0 do
-    gg.searchNumber(655365, gg.TYPE_DWORD)
-    gg.getResults(1)
-    local q = {}
-    q[1] = {}
-    q[1].address = wi[1].address + 0x4
-    q[1].flags = gg.TYPE_DWORD
-    q[1].value = result
-    gg.setValues(q)
-    local B = gg.getResults(1)
-    gg.editAll('0', gg.TYPE_DWORD)
-    gg.removeResults(B)
-    cnta = cnta - 1
-    gg.searchNumber(655365, gg.TYPE_DWORD)
-    gg.sleep(10)
-  end
+gg.searchNumber("1769485", gg.TYPE_DWORD)
+get_rs=gg.getResults(1)
+local player={}
+player[1]={}
+player[1].address=get_rs[1].address+0x4
+player[1].flags=gg.TYPE_DWORD
+player=gg.getValues(player)
+result=player[1].value
+gg.clearResults()
+
+gg.searchNumber(655365,gg.TYPE_DWORD)
+cnta=gg.getResultsCount()
+while cnta>0 do
+gg.searchNumber(655365,gg.TYPE_DWORD)
+gg.getResults(1)
+wi=gg.getResults(1)
+local q={}
+q[1]={}
+q[1].address=wi[1].address + 0x4
+q[1].flags=gg.TYPE_DWORD
+q[1].value=result
+gg.setValues(q)
+
+local B=gg.getResults(1)
+gg.editAll('0',gg.TYPE_DWORD)
+gg.removeResults(B)
+cnta=cnta-1
+gg.searchNumber(655365,gg.TYPE_DWORD)
+gg.sleep(10)
 end
-
+end
+-- player=gg.getValues(player)
+-- result=player[1].value
 if data[8] then
-  gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
-  local zx = gg.getResults(1)
-  local nulls = {}
-  nulls[1] = {}
-  nulls[1].address = zx[1].address + mobs
-  nulls[1].flags = gg.TYPE_DWORD
-  nulls[1].value = -100
-  gg.setValues(nulls)
+gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+gg.getResults(1)
+zx=gg.getResults(1)
+local nulls={}
+nulls[1]={}
+nulls[1].address=zx[1].address+mobs
+nulls[1].flags=gg.TYPE_DWORD
+nulls[1].value=-100
+gg.setValues(nulls)
 end
+--А13end
 
-if data[1] == "Other" then
-  gg.clearResults()
-  gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
-  local www = gg.getResults(1)
-  data[2] = tonumber(data[2])
-  local zet = {}
-  zet[1] = {}
-  zet[1].address = www[1].address + 0x4
-  zet[1].flags = gg.TYPE_DWORD
-  zet[1].value = 196622
-  gg.setValues(zet)
-  gg.clearResults()
+if data[1]=="Other" then
+gg.clearResults()
+gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+gg.getResults(1)
+www=gg.getResults(1)
+data[2]=tonumber(data[2])
+local zet={}
+zet[1]={}
+zet[1].address=www[1].address+0x4
+zet[1].flags=gg.TYPE_DWORD
+zet[1].value=196622
+gg.setValues(zet)
+gg.clearResults()
 
-  while data[2] > 0 do
-    gg.searchNumber(655365, gg.TYPE_DWORD)
-    gg.getResults(1)
-    local q = {}
-    q[1] = {}
-    q[1].address = wi[1].address + 0x4
-    q[1].flags = gg.TYPE_DWORD
-    q[1].value = 0
-    gg.setValues(q)
-    local B = gg.getResults(1)
-    gg.editAll('0', gg.TYPE_DWORD)
-    gg.removeResults(B)
-    data[2] = data[2] - 1
-    gg.searchNumber(655365, gg.TYPE_DWORD)
-    gg.sleep(10)
-  end
+while data[2]>0 do
+gg.searchNumber(655365,gg.TYPE_DWORD)
+gg.getResults(1)
+wi=gg.getResults(1)
+local q={}
+q[1]={}
+q[1].address=wi[1].address + 0x4
+q[1].flags=gg.TYPE_DWORD
+q[1].value=0
+gg.setValues(q)
+
+local B=gg.getResults(1)
+gg.editAll('0',gg.TYPE_DWORD)
+gg.removeResults(B)
+data[2]=data[2]-1
+gg.searchNumber(655365,gg.TYPE_DWORD)
+gg.sleep(10)
 end
-
-if data[1] == 'Чертоги теней' and data[3] then
-  gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
-  local www = gg.getResults(1)
-  data[2] = tonumber(data[2])
-  local zet = {}
-  zet[1] = {}
-  zet[1].address = www[1].address + mobs
-  zet[1].flags = gg.TYPE_DWORD
-  zet[1].value = 49283530
-  gg.setValues(zet)
-  gg.clearResults()
-  gg.searchNumber(655365, gg.TYPE_DWORD)
-  local cnta = gg.getResultsCount()
-  while cnta > 0 do
-    gg.searchNumber(655365, gg.TYPE_DWORD)
-    gg.getResults(1)
-    local q = {}
-    q[1] = {}
-    q[1].address = wi[1].address + 0x4
-    q[1].flags = gg.TYPE_DWORD
-    q[1].value = 49283530
-    gg.setValues(q)
-    local B = gg.getResults(1)
-    gg.editAll('0', gg.TYPE_DWORD)
-    gg.removeResults(B)
-    cnta = cnta - 1
-    gg.searchNumber(655365, gg.TYPE_DWORD)
-    gg.sleep(10)
-  end
 end
+--all
+if data[1]=='Чертоги теней' and data[3] then
+gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+gg.getResults(1)
+www=gg.getResults(1)
+data[2]=tonumber(data[2])
+local zet={}
+zet[1]={}
+zet[1].address=www[1].address+mobs
+zet[1].flags=gg.TYPE_DWORD
+zet[1].value=49283530
+gg.setValues(zet)
+gg.clearResults()
+gg.searchNumber(655365,gg.TYPE_DWORD)
+cnta=gg.getResultsCount()
+while cnta>0 do
+gg.searchNumber(655365,gg.TYPE_DWORD)
+gg.getResults(1)
+wi=gg.getResults(1)
+local q={}
+q[1]={}
+q[1].address=wi[1].address + 0x4
+q[1].flags=gg.TYPE_DWORD
+q[1].value=49283530
+gg.setValues(q)
 
+local B=gg.getResults(1)
+gg.editAll('0',gg.TYPE_DWORD)
+gg.removeResults(B)
+cnta=cnta-1
+gg.searchNumber(655365,gg.TYPE_DWORD)
+gg.sleep(10)
+end
+end
+--immortal
 if data[9] then
-  gg.searchNumber("000A0005h", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0, gg.REGION_JAVA_HEAP)
-  local Get = gg.getResults(gg.getResultsCount())
-  local iters = gg.getResultCount()
-  local N = {}
-  for i = iters, 1, -1 do
-    N[i] = {}
-    N[i].address = Get[i].address + immortal
-    N[i].flags = gg.TYPE_WORD
-    N[i].value = 257
-    gg.setValues(N)
-  end
+gg.searchNumber("000A0005h", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0,gg.REGION_JAVA_HEAP)
+local Get=gg.getResults(gg.getResultsCount())
+local iters=gg.getResultCount()
+local N={}
+for i=iters,1,-1 do
+N[i]={}
+N[i].address=Get[i].address+immortal
+N[i].flags=gg.TYPE_WORD
+N[i].value=257
+gg.setValues(N)
 end
-
+end
+--syka
 
 
 function Exit()
@@ -464,3 +478,4 @@ end
 --N[i].flags=gg.TYPE_DWORD
 --N[i].value=0
 --gg.setValues(N)]]--
+
