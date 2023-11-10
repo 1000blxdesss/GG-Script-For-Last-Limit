@@ -1,7 +1,7 @@
 --как же ему похер на красивый код---
 -- options
 local scriptName = [=====[Script for Last Limit 1.190]=====]
-local scriptVersion = '1.0.2'
+local scriptVersion = '1.0.3'
 local scriptAuthor = 'Vuelo'
 local startToast = ''
 -- 0 - no check; 1 - check package only, 2 - check package and build
@@ -38,18 +38,7 @@ os.exit()
 end
 local revert = nil
 end
--- main code
 
---offsets
-local speed= 0x8C + 0x68
-local invisible= 0x8C + 0xB6
-local range = 0x8C + 0x40
-local something = 0x68 + 0x8
-local mobs = 0x8C - 0x88
-local immortal = 0x90 + 0x4
-local location = 0x8C + 0x78
-local playerCount = 0xC0
---
 gg.clearResults()
 kele0=0
 Qjctx=1
@@ -71,6 +60,27 @@ local targetPkg = 'com.strategicon.lastlimit'
 local targetVersion = [=====[1.190]=====]
 local targetBuild = 190
 
+----------HELP_SECTIONS------------
+--offsets
+local speed= 0x8C + 0x68
+local invisible= 0x8C + 0xB6
+local range = 0x8C + 0x40
+local something = 0x68 + 0x8
+local mobs = 0x8C - 0x88
+local immortal = 0x90 + 0x4
+local location = 0x8C + 0x78
+local playerCount = 0xC0
+--
+function searchAddress()
+  gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+  gg.getResults(1)
+  w = gg.getResults(1)
+  local q = {}
+  q[1] = {}
+  q[1].address = w[1].address
+  return q[1].address
+end
+-----------------------------------
 --------------------------------------------
 function Test1()
 Mem = gg.choice({
@@ -78,25 +88,248 @@ Mem = gg.choice({
 	'Невидимка',
 	'Дистанция',
 	'Стяг(бета)',
-	'Меню',
-	'Info',
-	'Телепорт',
-	'Exit'
-},nil,'By Vuelo del acro')
+	'Сведения',
+	'Выход'
+},nil,'By Vuelo del acro'.."(v:"..scriptVersion..")")
 
 
 if Mem == 1 then TP() end
 if Mem == 2 then invis() end
 if Mem == 3 then dist() end
 if Mem == 4 then Mobs() end
-if Mem == 5 then Menu() end
-if Mem == 6 then info() end
-if Mem == 7 then tp() end
-if Mem == 8 then Exit() end
+if Mem == 5 then info() end
+if Mem == 6 then Exit() end
 if Mem == nil then end
 end
 ----------------------------------------
 -----------SECTION_FUNCTIONS------------
+	
+----1)----
+function TP()
+  local n = gg.prompt({'Выберите скорость: [0; 35]'}, {0}, {'number'})
+  if n == nil then os.exit() end
+  new_n = tonumber(n[1])
+  local address = searchAddress()
+  local q = {}
+  q[1] = {}
+  q[1].address = address + speed
+  q[1].flags = gg.TYPE_DOUBLE
+  if new_n == 0 then
+    q[1].value = 1,8036964e-310
+    gg.setValues(q)
+  elseif new_n > 0 then
+    q[1].flags = gg.TYPE_DWORD
+    q[1].value = new_n
+    gg.setValues(q)
+  end
+  gg.toast('Vuelo крут')
+  gg.clearResults()
+end
+----•----
+
+----2)----
+function invis()
+  local address = searchAddress()
+  local q = {}
+  q[1] = {}
+  q[1].address = address + invisible
+  q[1]["freezeType"] = gg.FREEZE_MAY_INCREASE
+  q[1].flags = gg.TYPE_WORD
+  q[1].value = 25
+  while x ~= (-2) do
+    gg.setValues(q)
+    q[1]["freezeType"] = gg.FREEZE_MAY_INCREASE
+  end
+end
+----•----
+	
+----3)----
+function dist()
+  local address = searchAddress()
+  local q,A={},{}
+  q[1],A[1]={},{}
+  q[1].address = address + range
+  q[1].flags = gg.TYPE_DWORD
+  q[1].value = 9999
+  gg.setValues(q)
+  A[1].address = address + something
+  A[1].flags = gg.TYPE_DWORD
+  A[1].value = 12
+  gg.setValues(A)
+end
+----•----
+	
+----4)----
+function Mobs()
+mobs_menu = gg.prompt(
+{
+	'Локация',
+	'Количество',
+	'Координаты',
+	'Притянуть всех',
+	'Безопасный выход',
+	'Отключить существ'
+	},
+{ 
+	[12]=false,
+	[2]="0"
+},
+{
+	[1]='text',
+	[2]='0 ',
+	[3]='',
+	[4]='checkbox',
+	[5]='checkbox',
+	[6]='checkbox'
+})
+--++--++--++--++(SECTION_MAGNET)
+if mobs_menu[1] == 'O' then 
+    gg.searchNumber("1769485", gg.TYPE_DWORD)
+    local get_rs = gg.getResults(1)
+    
+    local player = {}
+    player[1] = {}
+    player[1].address = get_rs[1].address + 0x4
+    player[1].flags = gg.TYPE_DWORD
+    player[1].value = 196622
+    gg.setValues(player)
+    local result = player[1].value
+    result = 196622
+    gg.setValues(player)
+    gg.clearResults()
+    
+    gg.searchNumber("000A0005h", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0, gg.REGION_JAVA_HEAP)
+    local results = gg.getResultsCount()
+    gg.toast(results)
+    
+    local addresses = gg.getResults(results) 
+    local values = {}
+    
+    for i = 1, mobs_menu[2] do
+        values[i] = {}
+        values[i].address = addresses[i].address + 0x4
+        values[i].flags = gg.TYPE_DWORD
+        values[i].value = result
+    end
+    
+    gg.setValues(values)
+end
+gg.clearResults()
+--
+if (mobs_menu[1] == "" and mobs_menu[2] ~= nil) then
+    gg.searchNumber("1769485", gg.TYPE_DWORD)
+    local get_rs = gg.getResults(1)
+    
+    local player = {}
+    player[1] = {}
+    player[1].address = get_rs[1].address + 0x4
+    player[1].flags = gg.TYPE_DWORD
+    
+    player = gg.getValues(player)
+    local result = player[1].value
+    
+    gg.clearResults()
+    
+    gg.searchNumber("000A0005h", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0, gg.REGION_JAVA_HEAP)
+    local results = gg.getResultsCount()
+    gg.toast(results)
+    
+    local addresses = gg.getResults(results) 
+    local values = {}
+    
+    for i = 1, mobs_menu[2] do
+        values[i] = {}
+        values[i].address = addresses[i].address + 0x4
+        values[i].flags = gg.TYPE_DWORD
+        values[i].value = player[1].value
+    end
+    
+    gg.setValues(values)
+ end
+ gg.clearResults()
+
+
+	--ALL_MAGNET
+	if mobs_menu[4] then
+    gg.searchNumber("1769485", gg.TYPE_DWORD)
+    local get_rs = gg.getResults(1)
+    
+    local player = {}
+    player[1] = {}
+    player[1].address = get_rs[1].address + 0x4
+    player[1].flags = gg.TYPE_DWORD
+    
+    player = gg.getValues(player)
+    local result = player[1].value
+    
+    gg.clearResults()
+    
+    gg.searchNumber("000A0005h", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0, gg.REGION_JAVA_HEAP)
+    local results = gg.getResultsCount()
+    gg.toast(results)
+    
+    local addresses = gg.getResults(results) 
+    local values = {}
+    
+    for i = 1, results do
+        values[i] = {}
+        values[i].address = addresses[i].address + 0x4
+        values[i].flags = gg.TYPE_DWORD
+        values[i].value = player[1].value
+    end
+    
+    gg.setValues(values)
+ end
+ gg.clearResults()
+	--    ALL    --
+		
+--------SAVE_LEAVE--------
+if mobs_menu[5] then
+ local address = searchAddress()
+ local nulls = {}
+ nulls[1] = {}
+ nulls[1].address = address + mobs
+ nulls[1].flags = gg.TYPE_DWORD
+ nulls[1].value = -678
+ gg.setValues(nulls)
+end
+--------------------------
+		
+--------MOBS_STATE--------
+if mobs_menu[6] then
+	gg.searchNumber("000A0005h", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0,gg.REGION_JAVA_HEAP)
+	local Get=gg.getResults(gg.getResultsCount())
+	local iters=gg.getResultCount()
+	local N={}
+	for i=iters,1,-1 do
+		N[i]={}
+		N[i].address=Get[i].address+immortal
+		N[i].flags=gg.TYPE_WORD
+		N[i].value=257
+		gg.setValues(N)
+	end
+end
+--------------------------
+if mobs_menu[3] ~=nil then
+	--	local notinput = gg.prompt({'Введите координаты:'}, {[1]='0'}, {[1]='number'})
+  if mobs_menu[3]== nil or mobs_menu[3]== "" then
+    return
+  else
+    local address = searchAddress()
+    local nulls = {}
+    nulls[1] = {}
+    nulls[1].address = address + mobs
+    nulls[1].flags = gg.TYPE_DWORD
+    nulls[1].value = tonumber( mobs_menu[3])--already number -_-
+    gg.setValues(nulls)
+  end
+end	
+
+--++--++--++--++(SECTION_MAGNET)
+end
+--------
+
+----5)----
 function info()
   gg.clearResults()
   gg.searchNumber("0000EA600003D090h", gg.TYPE_QWORD)
@@ -126,336 +359,34 @@ function info()
   --------id location-----------------
   gg.alert("Квадрат id: " .. value .. "\nСущностей: " .. entityCount .. "\nИгроков: " .. players .. "\nРассчет может быть неверен из-за регионов Ca,A (отключите их на свое усмотрение)")
 end
-
-function searchAddress()
-  gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
-  gg.getResults(1)
-  w = gg.getResults(1)
-  local q = {}
-  q[1] = {}
-  q[1].address = w[1].address
-  return q[1].address
-end
-
-function tp()
-  notinput = gg.prompt( { 'Введите координаты:' } ),
-  { [1]='0' } ,
-  { [1]='number' }
-  local address = searchAddress()
-  local nulls = {}
-  nulls[1] = {}
-  nulls[1].address = address + mobs
-  nulls[1].flags = gg.TYPE_DWORD
-  nulls[1].value = notinput[1]
-  gg.setValues(nulls)
-end
-
-function TP()
-  local n = gg.prompt({'Выберите скорость: [0; 35]'}, {0}, {'number'})
-  if n == nil then os.exit() end
-  new_n = tonumber(n[1])
-  local address = searchAddress()
-  local q = {}
-  q[1] = {}
-  q[1].address = address + speed
-  q[1].flags = gg.TYPE_DOUBLE
-  if new_n == 0 then
-    q[1].value = 1,8036964e-310
-    gg.setValues(q)
-  elseif new_n > 0 then
-    q[1].flags = gg.TYPE_DWORD
-    q[1].value = new_n
-    gg.setValues(q)
-  end
-  gg.toast('Vuelo крут')
-  gg.clearResults()
-end
-
-function invis()
-  local address = searchAddress()
-  local q = {}
-  q[1] = {}
-  q[1].address = address + invisible
-  q[1]["freezeType"] = gg.FREEZE_MAY_INCREASE
-  q[1].flags = gg.TYPE_WORD
-  q[1].value = 25
-  while x ~= (-2) do
-    gg.setValues(q)
-    q[1]["freezeType"] = gg.FREEZE_MAY_INCREASE
-  end
-end
-
-function dist()
-  local address = searchAddress()
-  local q = {}
-  local A = {}
-  q[1] = {}
-  A[1] = {}
-  q[1].address = address + range
-  q[1].flags = gg.TYPE_DWORD
-  q[1].value = 9999
-  gg.setValues(q)
-  A[1].address = address + something
-  A[1].flags = gg.TYPE_DWORD
-  A[1].value = 12
-  gg.setValues(A)
-end
+--------
+	
+----6)----
 
 
-function Mobs()
-data = gg.prompt(
-{
-	'Локация',
-	'Количество',
-	'хз',
-	'собрать все золото',
-	'ask path', 
-	'ask file','К порталу', 
-	'Безопасный Выход',
-	'Бессмертие',
-	'стянуть всех'},
-{ 
-	[12]=false,
-	[2]="0"
-},
-{
-	[2]='0 ',
-	[1]='text',
-	[3]='checkbox',
-	[4]='checkbox', 
-	[5]='path', 
-	[6]='file',
-	[7]='checkbox', 
-	[8]='checkbox',
-	[9]='checkbox',
-	[10]='checkbox'
-})
-
-if data[1]=='A13' then
-gg.searchNumber("001B000Dh", gg.TYPE_DWORD,false, gg.SIGN_EQUAL, 0, -1, 0)
-
-gg.getResults(1)
-www=gg.getResults(1)
-local zet={}
-zet[1]={}
-zet[1].address=www[1].address+mobs
-zet[1].flags=gg.TYPE_DWORD
-zet[1].value=197054
-gg.setValues(zet)
-gg.clearResults()
-gg.searchNumber(655365,gg.TYPE_DWORD)
-local counts=gg.getResults(2)
-gg.removeResults(counts)
-data[2]=tonumber(data[2])
---
-while data[2]>0 do
-gg.searchNumber(655365,gg.TYPE_DWORD)
-wi=gg.getResults(1)
-local q={}
-q[1]={}
-q[1].address=wi[1].address + 0x4 
-q[1].flags=gg.TYPE_DWORD
-q[1].value=197054
-gg.setValues(q)
-
-local B=gg.getResults(1)    
-gg.editAll('0',gg.TYPE_DWORD)
-gg.removeResults(B)
-data[2]=data[2]-1
-gg.searchNumber(655365,gg.TYPE_DWORD)
-gg.sleep(10)
-end
-if data[1]=='A13' and data[7] then
-zet[1].value=31850946 
-gg.setValues(zet)
-end
-end
-
---zxc
-if data[10] then
-
-gg.searchNumber("1769485", gg.TYPE_DWORD)
-get_rs=gg.getResults(1)
-local player={}
-player[1]={}
-player[1].address=get_rs[1].address+0x4
-player[1].flags=gg.TYPE_DWORD
-player=gg.getValues(player)
-result=player[1].value
-gg.clearResults()
-
-gg.searchNumber(655365,gg.TYPE_DWORD)
-cnta=gg.getResultsCount()
-while cnta>0 do
-gg.searchNumber(655365,gg.TYPE_DWORD)
-gg.getResults(1)
-wi=gg.getResults(1)
-local q={}
-q[1]={}
-q[1].address=wi[1].address + 0x4
-q[1].flags=gg.TYPE_DWORD
-q[1].value=result
-gg.setValues(q)
-
-local B=gg.getResults(1)
-gg.editAll('0',gg.TYPE_DWORD)
-gg.removeResults(B)
-cnta=cnta-1
-gg.searchNumber(655365,gg.TYPE_DWORD)
-gg.sleep(10)
-end
-end
--- player=gg.getValues(player)
--- result=player[1].value
-if data[8] then
-gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
-gg.getResults(1)
-zx=gg.getResults(1)
-local nulls={}
-nulls[1]={}
-nulls[1].address=zx[1].address+mobs
-nulls[1].flags=gg.TYPE_DWORD
-nulls[1].value=-100
-gg.setValues(nulls)
-end
---А13end
-
-if data[1]=="Other" then
-gg.clearResults()
-gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
-gg.getResults(1)
-www=gg.getResults(1)
-data[2]=tonumber(data[2])
-local zet={}
-zet[1]={}
-zet[1].address=www[1].address+0x4
-zet[1].flags=gg.TYPE_DWORD
-zet[1].value=196622
-gg.setValues(zet)
-gg.clearResults()
-
-while data[2]>0 do
-gg.searchNumber(655365,gg.TYPE_DWORD)
-gg.getResults(1)
-wi=gg.getResults(1)
-local q={}
-q[1]={}
-q[1].address=wi[1].address + 0x4
-q[1].flags=gg.TYPE_DWORD
-q[1].value=0
-gg.setValues(q)
-
-local B=gg.getResults(1)
-gg.editAll('0',gg.TYPE_DWORD)
-gg.removeResults(B)
-data[2]=data[2]-1
-gg.searchNumber(655365,gg.TYPE_DWORD)
-gg.sleep(10)
-end
-end
---all
-if data[1]=='Чертоги теней' and data[3] then
-gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
-gg.getResults(1)
-www=gg.getResults(1)
-data[2]=tonumber(data[2])
-local zet={}
-zet[1]={}
-zet[1].address=www[1].address+mobs
-zet[1].flags=gg.TYPE_DWORD
-zet[1].value=49283530
-gg.setValues(zet)
-gg.clearResults()
-gg.searchNumber(655365,gg.TYPE_DWORD)
-cnta=gg.getResultsCount()
-while cnta>0 do
-gg.searchNumber(655365,gg.TYPE_DWORD)
-gg.getResults(1)
-wi=gg.getResults(1)
-local q={}
-q[1]={}
-q[1].address=wi[1].address + 0x4
-q[1].flags=gg.TYPE_DWORD
-q[1].value=49283530
-gg.setValues(q)
-
-local B=gg.getResults(1)
-gg.editAll('0',gg.TYPE_DWORD)
-gg.removeResults(B)
-cnta=cnta-1
-gg.searchNumber(655365,gg.TYPE_DWORD)
-gg.sleep(10)
-end
-end
---immortal
-if data[9] then
-gg.searchNumber("000A0005h", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0,gg.REGION_JAVA_HEAP)
-local Get=gg.getResults(gg.getResultsCount())
-local iters=gg.getResultCount()
-local N={}
-for i=iters,1,-1 do
-N[i]={}
-N[i].address=Get[i].address+immortal
-N[i].flags=gg.TYPE_WORD
-N[i].value=257
-gg.setValues(N)
-end
-end
---syka
+--------
 
 
+
+
+--место для чилла
+
+
+
+
+
+
+-------------------------------------
+
+----------END_SECTIONS-------
+	
+----7)----
 function Exit()
 os.exit()
 end
-end
---New menu --New menu
-function Menu()
-Mems = gg.choice({'A13','Чертоги','Exit'},nil,'By Vuelo del acro')
-if Mems == 1 then A13() end
-if Mems == 2 then chert() end
-if Mems == 3 then Exit() end
-if Mems == nil then end
-end
-function A13()
-gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+--------
 
-gg.getResults(1)
-www=gg.getResults(1)
-local zet={}
-zet[1]={}
-zet[1].address=www[1].address+mobs
-zet[1].flags=gg.TYPE_DWORD
-zet[1].value=197054
-gg.setValues(zet)
-gg.clearResults()
-gg.searchNumber(655365,gg.TYPE_DWORD)
-local counts=gg.getResults(2)
-gg.removeResults(counts)
-data=10
-while data>0 do
---check
-
---endCheck
-gg.searchNumber(655365,gg.TYPE_DWORD)
-wi=gg.getResults(1)
-local q={}
-q[1]={}
-q[1].address=wi[1].address + 0x4 
-q[1].flags=gg.TYPE_DWORD
-q[1].value=197054
-gg.setValues(q)
-
-
-local B=gg.getResults(1)    
-gg.editAll('0',gg.TYPE_DWORD)
-gg.removeResults(B)
-data=data-1
-gg.searchNumber(655365,gg.TYPE_DWORD)
-gg.sleep(10)
-end
-end
-while(true)
-do
+while(true) do
 if gg.isVisible(true) then
 Qjctx=1
 gg.setVisible(false)
@@ -463,19 +394,12 @@ end
 gg.clearResults()
 if Qjctx==1 then Hello() end
 end
--- main code
+--function tp(address, flags)
+    --local values = gg.getValues({{address = address, flags = flags}})
+    --return values[1].value
+--end
 
---[[gg.clearResults()
- --gg.searchNumber("000A0005h", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0,gg.REGION_JAVA_HEAP)
---local Get=gg.getResults(gg.getResultsCoun byt())
---local iters=gg.getResultCount()
---local N={}
---for i=iters,1,-1 do
-   
+--local player_value_address = player[1].address + 0x4
+--local player_value_flags = gg.TYPE_DWORD
 
---N[i]={}
---N[i].address=Get[i].address+0x4
---N[i].flags=gg.TYPE_DWORD
---N[i].value=0
---gg.setValues(N)]]--
-
+--local current_player_value = tp(player_value_address, player_value_flags)
