@@ -71,8 +71,8 @@ local immortal = 0x90 + 0x4
 local location = 0x8C + 0x78
 local playerCount = 0xC0
 --
-function searchAddress(offsets, flags)
-  gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
+function searchAddress(offsets, flags, hAddress)
+  gg.searchNumber(hAddress, gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
   gg.getResults(1)
   local w = gg.getResults(1)
   local q = {}
@@ -117,7 +117,7 @@ function TP()
   local n = gg.prompt({'Выберите скорость: [0; 35]'}, {0}, {'number'})
   if n == nil then os.exit() end
   local new_n = tonumber(n[1])
-  local address = searchAddress(speed, gg.TYPE_FLOAT)
+  local address = searchAddress(speed, gg.TYPE_FLOAT,"001B000Dh")
   if new_n == 0 then
     address.value = 1.8036964e-310
     gg.setValues({
@@ -155,7 +155,7 @@ end
 	
 ----3)----
 function dist()
-  local address = searchAddress(range, gg.TYPE_DWORD)
+  local address = searchAddress(range, gg.TYPE_DWORD,"001B000Dh")
   address.value = 9999
   gg.setValues({
     {
@@ -164,8 +164,7 @@ function dist()
       value = address.value
     }
   })
-
-  local saddress = searchAddress(speed, gg.TYPE_DWORD)
+  local saddress = searchAddress(speed, gg.TYPE_DWORD,"001B000Dh")
   saddress.value = 12
   gg.setValues({
     {
@@ -202,20 +201,20 @@ mobs_menu = gg.prompt(
 	[6]='checkbox'
 })
 --++--++--++--++(SECTION_MAGNET)
-if mobs_menu[1] == 'O' then 
-    gg.searchNumber("1769485", gg.TYPE_DWORD)
-    local get_rs = gg.getResults(1)
-    
-    local player = {}
-    player[1] = {}
-    player[1].address = get_rs[1].address + 0x4
-    player[1].flags = gg.TYPE_DWORD
-    player[1].value = 196622
-    gg.setValues(player)
-    local result = player[1].value
+if mobs_menu[1] == 'O' then
+  local address = searchAddress(0x4, gg.TYPE_DWORD,"1769485")
+    gg.setValues({
+    {
+      address = address.address,
+      flags = address.flags,
+      value = address.value
+    }
+  })
+    local result = address.value
     result = 196622
-    gg.setValues(player)
+    --gg.setValues(player)
     gg.clearResults()
+    
     
     gg.searchNumber("000A0005h", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0, gg.REGION_JAVA_HEAP)
     local results = gg.getResultsCount()
