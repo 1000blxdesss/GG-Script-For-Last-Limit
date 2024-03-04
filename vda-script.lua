@@ -62,8 +62,8 @@ local targetBuild = 190
 
 ----------HELP_SECTIONS------------
 --offsets
-local speed= 0x8C + 0x68
-local invisible= 0x8C + 0xB6
+local speed = 0x8C + 0x68
+local invisible = 0x8C + 0xB6
 local range = 0x8C + 0x40
 local something = 0x68 + 0x8
 local mobs = 0x8C - 0x88
@@ -71,14 +71,21 @@ local immortal = 0x90 + 0x4
 local location = 0x8C + 0x78
 local playerCount = 0xC0
 --
-function searchAddress()
+function searchAddress(offsets, flags)
   gg.searchNumber("001B000Dh", gg.TYPE_DWORD, false, gg.SIGN_EQUAL, 0, -1, 0)
   gg.getResults(1)
-  w = gg.getResults(1)
+  local w = gg.getResults(1)
   local q = {}
   q[1] = {}
   q[1].address = w[1].address
-  return q[1].address
+  q[1].value = 0 -- Add the value field here
+
+  local q = {}
+  q[1] = {}
+  q[1].address = w[1].address + offsets
+  q[1].flags = flags
+
+  return q[1]
 end
 -----------------------------------
 --------------------------------------------
@@ -89,6 +96,7 @@ Mem = gg.choice({
 	'Дистанция',
 	'Стяг(бета)',
 	'Сведения',
+	
 	'Выход'
 },nil,'By Vuelo del acro'.."(v:"..scriptVersion..")")
 
@@ -108,21 +116,23 @@ end
 function TP()
   local n = gg.prompt({'Выберите скорость: [0; 35]'}, {0}, {'number'})
   if n == nil then os.exit() end
-  new_n = tonumber(n[1])
-  local address = searchAddress()
-  local q = {}
-  q[1] = {}
-  q[1].address = address + speed
-  q[1].flags = gg.TYPE_DOUBLE
+  local new_n = tonumber(n[1])
+  local address = searchAddress(speed, gg.TYPE_FLOAT)
   if new_n == 0 then
-    q[1].value = 1,8036964e-310
-    gg.setValues(q)
+    address.value = 1.8036964e-310
+    gg.setValues({
+    	{
+    	address = address.address, 
+    	flags = address.flags, 
+    	value = address.value
+    	}
+    	})
   elseif new_n > 0 then
-    q[1].flags = gg.TYPE_DWORD
-    q[1].value = new_n
-    gg.setValues(q)
+    address.flags = gg.TYPE_DWORD
+    address.value = new_n
+    gg.setValues({{address = address.address, flags = address.flags, value = address.value}})
   end
-  gg.toast('Vuelo крут')
+  gg.toast('Speed activated')
   gg.clearResults()
 end
 ----•----
@@ -145,17 +155,26 @@ end
 	
 ----3)----
 function dist()
-  local address = searchAddress()
-  local q,A={},{}
-  q[1],A[1]={},{}
-  q[1].address = address + range
-  q[1].flags = gg.TYPE_DWORD
-  q[1].value = 9999
-  gg.setValues(q)
-  A[1].address = address + something
-  A[1].flags = gg.TYPE_DWORD
-  A[1].value = 12
-  gg.setValues(A)
+  local address = searchAddress(range, gg.TYPE_DWORD)
+  address.value = 9999
+  gg.setValues({
+    {
+      address = address.address,
+      flags = address.flags,
+      value = address.value
+    }
+  })
+
+  local saddress = searchAddress(speed, gg.TYPE_DWORD)
+  saddress.value = 12
+  gg.setValues({
+    {
+      address = saddress.address,
+      flags = saddress.flags,
+      value = saddress.value
+    }
+  })
+  gg.toast('Dist. activated')
 end
 ----•----
 	
