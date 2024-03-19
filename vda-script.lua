@@ -1,7 +1,7 @@
 --как же ему похер на красивый код---
 -- options
 local scriptName = [=====[Script for Last Limit 1.190]=====]
-local scriptVersion = '1.0.3'
+local scriptVersion = '1.0.4'
 local scriptAuthor = 'Vuelo'
 local startToast = ''
 -- 0 - no check; 1 - check package only, 2 - check package and build
@@ -207,10 +207,10 @@ if mobs_menu[1] == 'O' then
     {
       address = address.address,
       flags = address.flags,
-      value = address.value
+      value = 196622
     }
   })
-    local result = address.value
+    
     result = 196622
     --gg.setValues(player)
     gg.clearResults()
@@ -225,9 +225,16 @@ if mobs_menu[1] == 'O' then
     
     for i = 1, mobs_menu[2] do
         values[i] = {}
+       
+        addresses[i].value=0
+        gg.setValues(addresses)
         values[i].address = addresses[i].address + 0x4
+        
         values[i].flags = gg.TYPE_DWORD
         values[i].value = result
+        if (values[i].value==0 or values[i].value<=1000000) then
+         gg.toast('not valid object')
+        end
     end
     
     gg.setValues(values)
@@ -257,9 +264,16 @@ if (mobs_menu[1] == "" and mobs_menu[2] ~= nil) then
     
     for i = 1, mobs_menu[2] do
         values[i] = {}
+       
+        addresses[i].value=0
+        gg.setValues(addresses)
         values[i].address = addresses[i].address + 0x4
+        
         values[i].flags = gg.TYPE_DWORD
-        values[i].value = player[1].value
+        values[i].value = result
+        if (values[i].value==0 or values[i].value<=1000000) then
+         gg.toast('not valid object')
+        end
     end
     
     gg.setValues(values)
@@ -291,9 +305,16 @@ if (mobs_menu[1] == "" and mobs_menu[2] ~= nil) then
     
     for i = 1, results do
         values[i] = {}
+       
+        addresses[i].value=0
+        gg.setValues(addresses)
         values[i].address = addresses[i].address + 0x4
+        
         values[i].flags = gg.TYPE_DWORD
         values[i].value = player[1].value
+        if (values[i].value==0 or values[i].value<=1000000) then
+         gg.toast('not valid object')
+        end
     end
     
     gg.setValues(values)
@@ -303,13 +324,15 @@ if (mobs_menu[1] == "" and mobs_menu[2] ~= nil) then
 		
 --------SAVE_LEAVE--------
 if mobs_menu[5] then
- local address = searchAddress()
- local nulls = {}
- nulls[1] = {}
- nulls[1].address = address + mobs
- nulls[1].flags = gg.TYPE_DWORD
- nulls[1].value = -678
- gg.setValues(nulls)
+ local address = searchAddress(mobs,gg.TYPE_DWORD,"1769485")
+ gg.setValues({
+    {
+      address = address.address,
+      flags = address.flags,
+      value = -678
+    }
+  })
+ 
 end
 --------------------------
 		
