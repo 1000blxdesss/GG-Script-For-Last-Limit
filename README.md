@@ -1,5 +1,6 @@
 # GG-Script-For-Last-Limit
 Поддержать разработку можете на: https://boosty.to/nxxvxxxrmxxdxx
+
 Этот проект построен на основе luaj: https://github.com/luaj/luaj
 Любые ошибки/выводы скрипта перенаправлены на игровой поток
 API:
