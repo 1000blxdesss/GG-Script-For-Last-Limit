@@ -1,5 +1,6 @@
 # GG-Script-For-Last-Limit
 Скачать: https://github.com/1000blxdesss/GG-Script-For-Last-Limit/releases/download/Last_Limitv101/Lua.apk
+
 Поддержать разработку можете на: https://boosty.to/nxxvxxxrmxxdxx
 
 Этот проект построен на основе luaj: https://github.com/luaj/luaj
