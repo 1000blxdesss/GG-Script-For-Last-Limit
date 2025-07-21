@@ -1,9 +1,11 @@
 # GG-Script-For-Last-Limit
-Плавающее мод меню: https://github.com/1000blxdesss/GG-Script-For-Last-Limit/releases/download/v1.0.4/Lua.apk
+Плавающее чит меню: https://github.com/1000blxdesss/GG-Script-For-Last-Limit/releases/download/v1.0.4/Lua.apk
+
 <img width="422" height="711" alt="image" src="https://github.com/user-attachments/assets/03c6b001-0581-48e0-9ca7-26b00f02093f" />
 
 Старое меню: https://github.com/1000blxdesss/GG-Script-For-Last-Limit/releases/download/Last_Limitv101/Lua.apk
 
+Примеры скриптов брать в папке (example lua/Lua utils)
 Поддержать разработку можете на: https://boosty.to/nxxvxxxrmxxdxx
 
 Этот проект построен на основе luaj: https://github.com/luaj/luaj
@@ -95,6 +97,6 @@ API:
    • Возвращает: ничего.  
    • Пример:  
      ```setDecor(0,0,0,0)```
-Примеры скриптов брать в папке (example lua)
+
 __________________________________________________________
 Поддержка скриптов и апк для game guardian прекращена
