@@ -7,7 +7,6 @@
 Старое меню: https://github.com/1000blxdesss/GG-Script-For-Last-Limit/releases/download/Last_Limitv101/Lua.apk
 
 Примеры скриптов брать в папке (example lua/Lua utils)
-Поддержать разработку можете на: https://boosty.to/nxxvxxxrmxxdxx
 
 Этот проект построен на основе luaj: https://github.com/luaj/luaj
 Любые ошибки/выводы скрипта перенаправлены на игровой поток
